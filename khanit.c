@@ -12,7 +12,7 @@ typedef struct { // Holds systemd and dinit field values to map them to each oth
     const char *dinit_val;
 } val_map;
 
-const char *lookup_dinit_key(const char *systemd_key, dir_map ref_map[], size_t ref_map_size) {
+const char *lookup_dinit_key(const char *systemd_key, dir_map ref_map[], size_t ref_map_size) { // Lookup function for systemd & dinit keys
     for (size_t i = 0; i < ref_map_size; i++) {
         if (strcmp(ref_map[i].systemd_key, systemd_key) == 0) {
             return ref_map[i].dinit_key;
