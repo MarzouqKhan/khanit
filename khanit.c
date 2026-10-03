@@ -135,7 +135,18 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
 
                 const char *dinit_key = lookup_dinit_key(key, ref_map, sizeof(ref_map) / sizeof(ref_map[0]));
                 if (dinit_key != NULL) {
-                    printf("%s=%s\n", dinit_key, value);
+                    if (strcmp(key, "Type") == 0) {
+                        const char *dinit_value = lookup_type_value(value, type_map, sizeof(type_map) / sizeof(type_map[0]));
+                        if (dinit_value != NULL) {
+                            printf("%s=%s\n", dinit_key, dinit_value);
+                        }
+                        else {
+                            printf("# Unsupported Type value: %s\n", value);
+                        }
+                    }
+                    else {
+                        printf("%s=%s\n", dinit_key, value);
+                    }
                 }
                 else {
                     printf("# Unsupported or unknown key: %s\n", key);
