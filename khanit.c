@@ -45,6 +45,16 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
     }
 
     char *line = nullptr;
+    char output_filepath[512];
+    snprintf(output_filepath, sizeof(output_filepath), "%s.dinit", service_filepath);
+    FILE *output_fp = fopen(output_filepath, "w");
+
+    if (output_fp == NULL) {
+        printf("Error: Could not create output file: %s\n", output_filepath);
+        fclose(fp);
+        free(line);
+        return 1;
+    }
     size_t len = 0;
     bool section_header = false;
 
@@ -138,24 +148,25 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
                     if (strcmp(key, "Type") == 0) {
                         const char *dinit_value = lookup_type_value(value, type_map, sizeof(type_map) / sizeof(type_map[0]));
                         if (dinit_value != NULL) {
-                            printf("%s=%s\n", dinit_key, dinit_value);
+                            fprintf(output_fp, "%s=%s\n", dinit_key, dinit_value);
                         }
                         else {
-                            printf("# Unsupported Type value: %s\n", value);
+                            fprintf(output_fp, "# Unsupported Type value: %s\n", value);
                         }
                     }
                     else {
-                        printf("%s=%s\n", dinit_key, value);
+                        fprintf(output_fp, "%s=%s\n", dinit_key, value);
                     }
                 }
                 else {
-                    printf("# Unsupported or unknown key: %s\n", key);
+                    fprintf(output_fp, "# Unsupported or unknown key: %s\n", key);
                 }
             }
         }
     }
 
     fclose(fp);
+    fclose(output_fp);
     free(line);
     return 0;
 }
