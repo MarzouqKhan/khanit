@@ -114,18 +114,23 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
         else {
             section_header = false;
             char *equals_sign = strchr(line, '=');
-            
             if (equals_sign != NULL) {
                 *equals_sign = '\0'; // Split string at '='
                 const char *key = line;
-                const char *value = equals_sign + 1;
+                char *value = equals_sign + 1;
                 char *newline = strchr(value, '\n');
 
                 if (newline != NULL) {
                     *newline = '\0';
                 }
-                printf("Key: [%s] Line: [%s]\n", key, value);
 
+                const char *dinit_key = lookup_dinit_key(key, ref_map, sizeof(ref_map) / sizeof(ref_map[0]));
+                if (dinit_key != NULL) {
+                    printf("%s=%s\n", dinit_key, value);
+                }
+                else {
+                    printf("# Unsupported or unknown key: %s\n", key);
+                }
             }
         }
     }
