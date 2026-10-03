@@ -2,6 +2,25 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct { // A struct to hold systemd and dinit fields to map them to each other cleanly with ref_map
+    const char *systemd_key;
+    const char *dinit_key;
+} dir_map;
+
+typedef struct { // Holds systemd and dinit field values to map them to each other cleanly with type_map
+    const char *systemd_val;
+    const char *dinit_val;
+} val_map;
+
+const char *lookup_dinit_key(const char *systemd_key, dir_map ref_map[], size_t ref_map_size) {
+    for (size_t i = 0; i < ref_map_size; i++) {
+        if (strcmp(ref_map[i].systemd_key, systemd_key) == 0) {
+            return ref_map[i].dinit_key;
+        }
+    }
+    return nullptr;
+}
+
 int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator test.service
 
     if (argc != 2) {
@@ -19,16 +38,6 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
     char *line = nullptr;
     size_t len = 0;
     bool section_header = false;
-
-    typedef struct { // A struct to hold systemd and dinit fields to map them to each other cleanly with ref_map
-        const char *systemd_key;
-        const char *dinit_key;
-    } dir_map;
-
-    typedef struct { // Holds systemd and dinit field values to map them to each other cleanly with type_map
-        const char *systemd_val;
-        const char *dinit_val;
-    } val_map;
 
     dir_map ref_map[] = { // All pairs where the dinit field is nullptr means there's no clean conversion
     {"Documentation", nullptr},
@@ -91,9 +100,6 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
     {"dbus", nullptr},
     };
     
-    // Print text to the console
-    printf("Hello, World!\n");
-
     while (getline(&line, &len, fp) != -1) {
         if (line[0] == '[') {
             section_header = true;
