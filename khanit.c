@@ -21,6 +21,15 @@ const char *lookup_dinit_key(const char *systemd_key, dir_map ref_map[], size_t 
     return nullptr;
 }
 
+const char *lookup_type_value(const char *systemd_val, val_map type_map[], size_t type_map_size) { // Lookup function for mapping systemd Type values to dinit
+    for (size_t i = 0; i < type_map_size; i++) {
+        if (strcmp(type_map[i].systemd_val, systemd_val) == 0) {
+            return type_map[i].dinit_val;
+        }
+    }
+    return nullptr;
+}
+
 int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator test.service
 
     if (argc != 2) {
