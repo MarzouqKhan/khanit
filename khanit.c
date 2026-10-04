@@ -158,6 +158,18 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
     {"on-abort", nullptr}, // No equivalent
     {"on-watchdog", nullptr}, // No equivalent
     };
+
+    val_map sig_map[] = { // Maps systemd SIG-prefix signal names to dinit unprefixed names (only dinit-supported signals included)
+    {"SIGHUP", "HUP"},
+    {"SIGINT", "INT"},
+    {"SIGQUIT", "QUIT"},
+    {"SIGKILL", "KILL"},
+    {"SIGUSR1", "USR1"},
+    {"SIGUSR2", "USR2"},
+    {"SIGTERM", "TERM"},
+    {"SIGCONT", "CONT"},
+    {"SIGSTOP", "STOP"},
+    };
     
     while (getline(&line, &len, fp) != -1) {
         if (line[0] == '[') {
