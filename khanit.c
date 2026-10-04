@@ -18,7 +18,6 @@ char *trim_space(char *str) {
     while (isspace((unsigned char)*str)) {
         str++;
     }
-
     if (*str == '\0') {
         return str;
     }
@@ -55,6 +54,15 @@ const char *lookup_restart_value(const char *systemd_val, val_map restart_map[],
     for (size_t i = 0; i < restart_map_size; i++) {
         if (strcmp(restart_map[i].systemd_val, systemd_val) == 0) {
             return restart_map[i].dinit_val;
+        }
+    }
+    return nullptr;
+}
+
+const char *lookup_sig_value(const char *systemd_val, val_map sig_map[], size_t sig_map_size) { // Lookup function for mapping systemd KillSignal values to dinit
+    for (size_t i = 0; i < sig_map_size; i++) {
+        if (strcmp(sig_map[i].systemd_val, systemd_val) == 0) {
+            return sig_map[i].dinit_val;
         }
     }
     return nullptr;
@@ -230,5 +238,6 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
     fclose(fp);
     fclose(output_fp);
     free(line);
+    
     return 0;
 }
