@@ -118,6 +118,16 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
     {"notify", "process"},
     {"dbus", nullptr},
     };
+
+    val_map restart_map[] = { // Maps systemd [Restart] values to dinit restart values
+    {"no", "no"},
+    {"always", "yes"}, // Closest match; dinit's "yes" is the broadest restart policy, practically same as "always"
+    {"on-failure", "on-failure"},
+    {"on-success", nullptr}, // No dinit equivalent
+    {"on-abnormal", nullptr}, // No equivalent
+    {"on-abort", nullptr}, // No equivalent
+    {"on-watchdog", nullptr}, // No equivalent
+    };
     
     while (getline(&line, &len, fp) != -1) {
         if (line[0] == '[') {
