@@ -30,6 +30,15 @@ const char *lookup_type_value(const char *systemd_val, val_map type_map[], size_
     return nullptr;
 }
 
+const char *lookup_restart_value(const char *systemd_val, val_map restart_map[], size_t restart_map_size) { // Lookup function for mapping systemd Restart values to dinit
+    for (size_t i = 0; i < restart_map_size; i++) {
+        if (strcmp(restart_map[i].systemd_val, systemd_val) == 0) {
+            return restart_map[i].dinit_val;
+        }
+    }
+    return nullptr;
+}
+
 int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator test.service
 
     if (argc != 2) {
@@ -162,6 +171,15 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
                         }
                         else {
                             fprintf(output_fp, "# Unsupported Type value: %s\n", value);
+                        }
+                    }
+                    else if (strcmp(key, "Restart") == 0) {
+                        const char *dinit_value = lookup_restart_value(value, restart_map, sizeof(restart_map) / sizeof(restart_map[0]));
+                        if (dinit_value != NULL) {
+                            fprintf(output_fp, "%s=%s\n", dinit_key, dinit_value);
+                        }
+                        else {
+                            fprintf(output_fp, "# Unsupported Restart value: %s\n", value);
                         }
                     }
                     else {
