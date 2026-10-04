@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 typedef struct { // A struct to hold systemd and dinit fields to map them to each other cleanly with ref_map
     const char *systemd_key;
@@ -11,6 +12,26 @@ typedef struct { // Holds systemd and dinit field values to map them to each oth
     const char *systemd_val;
     const char *dinit_val;
 } val_map;
+
+char *trim_space(char *str) {
+    // Trim leading whitespace: move pointer forward
+    while (isspace((unsigned char)*str)) {
+        str++;
+    }
+
+    if (*str == '\0') {
+        return str;
+    }
+
+    // Trim trailing whitespace: walk backward
+    char *end = str + strlen(str) - 1;
+    while (end > str && isspace((unsigned char)*end)) {
+        end--;
+    }
+    *(end + 1) = '\0';
+
+    return str;
+}
 
 const char *lookup_dinit_key(const char *systemd_key, dir_map ref_map[], size_t ref_map_size) { // Lookup function for systemd & dinit keys
     for (size_t i = 0; i < ref_map_size; i++) {
@@ -154,7 +175,7 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
             char *equals_sign = strchr(line, '=');
             if (equals_sign != NULL) {
                 *equals_sign = '\0'; // Split string at '='
-                const char *key = line;
+                const char *key = trim_space(line);
                 char *value = equals_sign + 1;
                 char *newline = strchr(value, '\n');
 
@@ -162,6 +183,7 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
                     *newline = '\0';
                 }
 
+                value = trim_space(value);
                 const char *dinit_key = lookup_dinit_key(key, ref_map, sizeof(ref_map) / sizeof(ref_map[0]));
                 if (dinit_key != NULL) {
                     if (strcmp(key, "Type") == 0) {
