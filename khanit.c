@@ -55,8 +55,68 @@ const char *lookup_value(const char *systemd_val, val_map value_map[], size_t va
     return nullptr;
 }
 
-int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator test.service
+double parse_time_to_seconds(const char *time_str, time_unit_map time_units[], size_t time_units_size) {
+    double total_seconds = 0;
+    char num_buf[32];
+    char unit_buf[16];
+    int num_i = 0;
+    int unit_i = 0;
+    bool reading_unit = false;
 
+    for (size_t i = 0; time_str[i] != '\0'; i++) {
+        char ch = time_str[i];
+        if (ch == ' ') {
+            continue;
+        }
+
+        if (isdigit((unsigned char)ch) || ch == '.') {
+            if (reading_unit) {
+                num_buf[num_i] = '\0';
+                unit_buf[unit_i] = '\0';
+
+                double value = strtod(num_buf, NULL);
+                // Look up the unit
+                for (size_t u = 0; u < time_units_size; u++) {
+                    if (strcmp(time_units[u].unit_name, unit_buf) == 0) {
+                        total_seconds += value * time_units[u].multiplier;
+                        break;
+                    }
+                }
+
+                num_i = 0;
+                unit_i = 0;
+                reading_unit = false;
+            }
+            num_buf[num_i++] = ch;
+        }
+        else if (isalpha((unsigned char)ch)) {
+            reading_unit = true;
+            unit_buf[unit_i++] = ch;
+        }
+    }
+    // Handle the final chunk after the loop ends
+    if (num_i > 0) {
+        num_buf[num_i] = '\0';
+        
+        if (unit_i > 0) {
+            unit_buf[unit_i] = '\0';
+            double value = strtod(num_buf, NULL);
+            for (size_t u = 0; u < time_units_size; u++) {
+                if (strcmp(time_units[u].unit_name, unit_buf) == 0) {
+                    total_seconds += value * time_units[u].multiplier;
+                    break;
+                }
+            }
+        }
+        else {
+            // bare number means seconds, per the spec
+            total_seconds += strtod(num_buf, NULL);
+        }
+    }
+    return total_seconds;
+}
+
+int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator test.service
     if (argc != 2) {
         printf("Usage: %s <service-file>\n", argv[0]); // Error message if no filepath given
             return 1;
