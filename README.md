@@ -6,7 +6,7 @@ It parses actual `.service` files, maps systemd directives onto their dinit equi
 
 ## Why
 
-dinit is a small, dependency-aware init system and service supervisor and an alternative to systemd used by distros like Chimera Linux and (optionally) Artix. Projects like [elogind](https://github.com/elogind/elogind) and [turnstile](https://github.com/chimera-linux/turnstiled) already let dinit-based systems run most systemd-dependent software. This tool handles a different piece of that puzzle: converting the actual `.service` files themselves.
+dinit is a small, dependency-aware init system and service supervisor and an alternative to systemd used by distros like Chimera Linux and (optionally) Artix. Projects like [elogind](https://github.com/elogind/elogind) and [turnstile](https://github.com/chimera-linux/turnstile) already let dinit-based systems run most systemd-dependent software. This tool handles a different piece of that puzzle: converting the actual `.service` files themselves.
 
 ## What it does
 
