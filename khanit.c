@@ -131,7 +131,17 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
 
     char *line = nullptr;
     char output_filepath[512];
-    snprintf(output_filepath, sizeof(output_filepath), "%s.dinit", service_filepath);
+    const char *service_suffix = ".service";
+    size_t filepath_len = strlen(service_filepath);
+    size_t suffix_len = strlen(service_suffix);
+    size_t base_len = filepath_len - suffix_len;
+
+    if (base_len >= sizeof(output_filepath)) {
+        base_len = sizeof(output_filepath) - 1;
+    }
+
+    memcpy(output_filepath, service_filepath, base_len);
+    output_filepath[base_len] = '\0';
     FILE *output_fp = fopen(output_filepath, "w");
 
     if (output_fp == NULL) {

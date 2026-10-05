@@ -10,7 +10,7 @@ dinit is a small, dependency-aware init system and service supervisor and an alt
 
 ## What it does
 
-Given a `.service` file, it reads the `[Service]` section and produces a `.dinit` file with the equivalent dinit service properties. Directives with no dinit equivalent are left out and flagged with a comment explaining why, rather than silently dropped or guessed at.
+Given a `.service` file, it reads the `[Service]` section and produces a file with the equivalent dinit service properties. Directives with no dinit equivalent are left out and flagged with a comment explaining why, rather than silently dropped or guessed at.
 
 Currently handled:
 - Direct key mappings for ~48 systemd directives (`ExecStart`, `After`, `Requires`, etc.); see the mapping table in `khanit.c`
@@ -35,7 +35,7 @@ gcc khanit.c -o khanit
 ./khanit some.service
 ```
 
-Produces `some.service.dinit` in the same directory.
+Produces `some` in the same directory.
 
 ## Status
 
