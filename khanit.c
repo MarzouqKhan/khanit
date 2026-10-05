@@ -166,20 +166,38 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
     {"SIGSTOP", "STOP"},
     };
 
-    time_unit_map time_units[] = {
-    {"s", 1},
-    {"sec", 1},
-    {"second", 1},
-    {"seconds", 1},
+time_unit_map time_units[] = {
+    {"usec", 0.000001},
+    {"us", 0.000001},
+    // "μs" intentionally omitted, not handled by single-byte char parsing
+    {"nsec", 0.000000001},
+    {"ns", 0.000000001},
+    {"msec", 0.001},
     {"ms", 0.001},
-    {"m", 60},
-    {"min", 60},
-    {"minute", 60},
+    {"seconds", 1},
+    {"second", 1},
+    {"sec", 1},
+    {"s", 1},
     {"minutes", 60},
-    {"h", 3600},
-    {"hr", 3600},
-    {"hour", 3600},
+    {"minute", 60},
+    {"min", 60},
+    {"m", 60},
     {"hours", 3600},
+    {"hour", 3600},
+    {"hr", 3600},
+    {"h", 3600},
+    {"days", 86400},
+    {"day", 86400},
+    {"d", 86400},
+    {"weeks", 604800},
+    {"week", 604800},
+    {"w", 604800},
+    {"months", 2629800}, // 30.44 days, per spec
+    {"month", 2629800},
+    {"M", 2629800},
+    {"years", 31557600}, // 365.25 days, per spec
+    {"year", 31557600},
+    {"y", 31557600},
     };
     
     while (getline(&line, &len, fp) != -1) {
