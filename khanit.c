@@ -224,6 +224,15 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
                             fprintf(output_fp, "# Unsupported Restart value: %s\n", value);
                         }
                     }
+                    else if (strcmp(key, "KillSignal") == 0) {
+                        const char *dinit_value = lookup_sig_value(value, sig_map, sizeof(sig_map) / sizeof(sig_map[0]));
+                        if (dinit_value != NULL) {
+                            fprintf(output_fp, "%s=%s\n", dinit_key, dinit_value);
+                        }
+                        else {
+                            fprintf(output_fp, "# Unsupported KillSignal value: %s\n", value);
+                        }
+                    }
                     else {
                         fprintf(output_fp, "%s=%s\n", dinit_key, value);
                     }
