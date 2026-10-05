@@ -192,9 +192,9 @@ time_unit_map time_units[] = {
     {"weeks", 604800},
     {"week", 604800},
     {"w", 604800},
-    {"months", 2629800}, // 30.44 days, per spec
-    {"month", 2629800},
-    {"M", 2629800},
+    {"months", 2630016}, // 30.44 days, per spec
+    {"month", 2630016},
+    {"M", 2630016},
     {"years", 31557600}, // 365.25 days, per spec
     {"year", 31557600},
     {"y", 31557600},
