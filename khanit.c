@@ -13,6 +13,11 @@ typedef struct { // Holds systemd and dinit field values to map them to each oth
     const char *dinit_val;
 } val_map;
 
+typedef struct { // Holds systemd time unit names and their values
+    const char *unit_name;
+    double multiplier;
+} time_unit_map;
+
 char *trim_space(char *str) {
     // Trim leading whitespace: move pointer forward
     while (isspace((unsigned char)*str)) {
@@ -159,6 +164,21 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
     {"SIGTERM", "TERM"},
     {"SIGCONT", "CONT"},
     {"SIGSTOP", "STOP"},
+    };
+
+    time_unit_map time_units[] = {
+    {"s", 1},
+    {"sec", 1},
+    {"second", 1},
+    {"seconds", 1},
+    {"ms", 0.001},
+    {"min", 60},
+    {"minute", 60},
+    {"minutes", 60},
+    {"h", 3600},
+    {"hr", 3600},
+    {"hour", 3600},
+    {"hours", 3600},
     };
     
     while (getline(&line, &len, fp) != -1) {
