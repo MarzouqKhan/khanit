@@ -172,6 +172,7 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
     {"second", 1},
     {"seconds", 1},
     {"ms", 0.001},
+    {"m", 60},
     {"min", 60},
     {"minute", 60},
     {"minutes", 60},
