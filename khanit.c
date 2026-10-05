@@ -41,28 +41,10 @@ const char *lookup_dinit_key(const char *systemd_key, dir_map ref_map[], size_t 
     return nullptr;
 }
 
-const char *lookup_type_value(const char *systemd_val, val_map type_map[], size_t type_map_size) { // Lookup function for mapping systemd Type values to dinit
-    for (size_t i = 0; i < type_map_size; i++) {
-        if (strcmp(type_map[i].systemd_val, systemd_val) == 0) {
-            return type_map[i].dinit_val;
-        }
-    }
-    return nullptr;
-}
-
-const char *lookup_restart_value(const char *systemd_val, val_map restart_map[], size_t restart_map_size) { // Lookup function for mapping systemd Restart values to dinit
-    for (size_t i = 0; i < restart_map_size; i++) {
-        if (strcmp(restart_map[i].systemd_val, systemd_val) == 0) {
-            return restart_map[i].dinit_val;
-        }
-    }
-    return nullptr;
-}
-
-const char *lookup_sig_value(const char *systemd_val, val_map sig_map[], size_t sig_map_size) { // Lookup function for mapping systemd KillSignal values to dinit
-    for (size_t i = 0; i < sig_map_size; i++) {
-        if (strcmp(sig_map[i].systemd_val, systemd_val) == 0) {
-            return sig_map[i].dinit_val;
+const char *lookup_value(const char *systemd_val, val_map value_map[], size_t value_map_size) { // Generic lookup for any val_map table
+    for (size_t i = 0; i < value_map_size; i++) {
+        if (strcmp(value_map[i].systemd_val, systemd_val) == 0) {
+            return value_map[i].dinit_val;
         }
     }
     return nullptr;
@@ -207,7 +189,7 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
                 const char *dinit_key = lookup_dinit_key(key, ref_map, sizeof(ref_map) / sizeof(ref_map[0]));
                 if (dinit_key != NULL) {
                     if (strcmp(key, "Type") == 0) {
-                        const char *dinit_value = lookup_type_value(value, type_map, sizeof(type_map) / sizeof(type_map[0]));
+                        const char *dinit_value = lookup_value(value, type_map, sizeof(type_map) / sizeof(type_map[0]));
                         if (dinit_value != NULL) {
                             fprintf(output_fp, "%s=%s\n", dinit_key, dinit_value);
                         }
@@ -216,7 +198,7 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
                         }
                     }
                     else if (strcmp(key, "Restart") == 0) {
-                        const char *dinit_value = lookup_restart_value(value, restart_map, sizeof(restart_map) / sizeof(restart_map[0]));
+                        const char *dinit_value = lookup_value(value, restart_map, sizeof(restart_map) / sizeof(restart_map[0]));
                         if (dinit_value != NULL) {
                             fprintf(output_fp, "%s=%s\n", dinit_key, dinit_value);
                         }
@@ -225,7 +207,7 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
                         }
                     }
                     else if (strcmp(key, "KillSignal") == 0) {
-                        const char *dinit_value = lookup_sig_value(value, sig_map, sizeof(sig_map) / sizeof(sig_map[0]));
+                        const char *dinit_value = lookup_value(value, sig_map, sizeof(sig_map) / sizeof(sig_map[0]));
                         if (dinit_value != NULL) {
                             fprintf(output_fp, "%s=%s\n", dinit_key, dinit_value);
                         }
