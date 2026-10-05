@@ -283,8 +283,15 @@ time_unit_map time_units[] = {
                 if (newline != NULL) {
                     *newline = '\0';
                 }
-
                 value = trim_space(value);
+
+                if (strcmp(key, "TimeoutSec") == 0) {
+                    double seconds = parse_time_to_seconds(value, time_units, sizeof(time_units) / sizeof(time_units[0]));
+                    fprintf(output_fp, "start-timeout=%g\n", seconds);
+                    fprintf(output_fp, "stop-timeout=%g\n", seconds);
+                }
+                else {
+
                 const char *dinit_key = lookup_dinit_key(key, ref_map, sizeof(ref_map) / sizeof(ref_map[0]));
                 if (dinit_key != NULL) {
                     if (strcmp(key, "Type") == 0) {
@@ -314,12 +321,17 @@ time_unit_map time_units[] = {
                             fprintf(output_fp, "# Unsupported KillSignal value: %s\n", value);
                         }
                     }
+                    else if (strcmp(key, "TimeoutStartSec") == 0 || strcmp(key, "TimeoutStopSec") == 0) {
+                        double seconds = parse_time_to_seconds(value, time_units, sizeof(time_units) / sizeof(time_units[0]));
+                        fprintf(output_fp, "%s=%g\n", dinit_key, seconds);
+                    }
                     else {
                         fprintf(output_fp, "%s=%s\n", dinit_key, value);
                     }
                 }
                 else {
                     fprintf(output_fp, "# Unsupported or unknown key: %s\n", key);
+                }
                 }
             }
         }
