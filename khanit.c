@@ -150,8 +150,22 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
         free(line);
         return 1;
     }
+
+    char env_filepath[512]; // For env file
+    snprintf(env_filepath, sizeof(env_filepath), "%s.env", output_filepath);
+    FILE *env_fp = fopen(env_filepath, "w");
+
+    if (env_fp == NULL) {
+        printf("Error: Could not create env file: %s\n", env_filepath);
+        fclose(fp);
+        fclose(output_fp);
+        free(line);
+        return 1;
+    }
+
     size_t len = 0;
     bool section_header = false;
+    bool wrote_env_line = false;
 
     dir_map ref_map[] = { // All pairs where the dinit field is nullptr means there's no clean conversion
     {"Documentation", nullptr},
@@ -195,6 +209,7 @@ int main(int argc, char *argv[]) { // argc should equal 2: e.g. ./translator tes
     {"TimeoutStopSec", "stop-timeout"},
     {"TimeoutSec", nullptr}, // Maps to start-timeout and stop timeout; will handle later
     {"Restart", "restart"},
+    {"Environment", nullptr}, // handled separately, see Environment branch
     {"EnvironmentFile", "env-file"},
     {"User", "run-as"},
     {"WorkingDirectory", "working-dir"},
@@ -300,8 +315,20 @@ time_unit_map time_units[] = {
                     fprintf(output_fp, "start-timeout=%g\n", seconds);
                     fprintf(output_fp, "stop-timeout=%g\n", seconds);
                 }
+                else if (strcmp(key, "Environment") == 0) {
+                    char *token = strtok(value, " ");
+                    bool wrote_any = false;
+                    while (token != NULL) {
+                        fprintf(env_fp, "%s\n", token);
+                        wrote_any = true;
+                        token = strtok(NULL, " ");
+                    }
+                    if (!wrote_env_line) {
+                        fprintf(output_fp, "env-file=%s\n", env_filepath);
+                        wrote_env_line = true;
+                    }
+                }
                 else {
-
                 const char *dinit_key = lookup_dinit_key(key, ref_map, sizeof(ref_map) / sizeof(ref_map[0]));
                 if (dinit_key != NULL) {
                     if (strcmp(key, "Type") == 0) {
@@ -347,6 +374,7 @@ time_unit_map time_units[] = {
         }
     }
 
+    fclose(env_fp);
     fclose(fp);
     fclose(output_fp);
     free(line);
